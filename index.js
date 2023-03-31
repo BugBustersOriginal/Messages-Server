@@ -217,6 +217,20 @@ app.post('/friendRequest', async (req, res) => {
   }
 });
 
+app.post('/changeprofilepicture', async (req, res) => {
+  let userId = req.body.data.userId;
+  let update = { thumbnailUrl: req.body.data.picUrl  };
+  let userFilter = {userId: userId};
+  // console.log('got friendRequest in server: ', req.body.data.friendRequestObj);
+  try {
+    const changePic = await FriendList.updateOne(userFilter, update)
+    res.status(201).send();
+  } catch (err) {
+    console.error(err);
+    res.status(500).send(err);
+  }
+});
+
 app.post('/acceptRequest', async (req, res) => {
   console.log('accept friend request server', req.body.data);
   let userId = req.body.data.userId;
