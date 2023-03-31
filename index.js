@@ -41,7 +41,9 @@ function getRoomsByUser(id){
 app.use(express.json());
 const io = new Server(server, {
   cors :{
+
     origin : [process.env.CORS_ORIGIN1, process.env.CORS_ORIGIN2],
+
     methods:['GET','POST','PUT']
   }
 })
@@ -210,6 +212,22 @@ app.post('/friendRequest', async (req, res) => {
   try {
     const friend = await FriendList.updateOne(friendFilter, update)
     const pending = await FriendList.updateOne(userFilter, pendingRequest)
+    res.status(201).send();
+  } catch (err) {
+    console.error(err);
+    res.status(500).send(err);
+  }
+});
+
+app.post('/imgDled', async (req, res) => {
+  let sender = req.body.sender;
+  let downloader = req.body.downloader;
+
+  let update = {$push: { incomingNotifications: {friendId: sender, type: 'saved photo'}  }};
+  let userFilter = {friendId: sender};
+  // console.log('got friendRequest in server: ', req.body.data.friendRequestObj);
+  try {
+    const pending = await FriendList.updateOne(userFilter, update)
     res.status(201).send();
   } catch (err) {
     console.error(err);
