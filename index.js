@@ -71,7 +71,7 @@ app.post("/openedImage/:id", async (req, res) => {
     if (!updatedMessage) {
       return res.status(404).send({ error: 'Message not found or does not contain an image' });
     }
-    console.log(`convoId is equal to ${updatedMessage.conversationId}`);
+    // console.log(`convoId is equal to ${updatedMessage.conversationId}`);
     const conversationId = updatedMessage.conversationId;
     const updatedConversation = await Conversation.findOneAndUpdate(
       { _id: conversationId, 'messages._id': messageId },
@@ -104,7 +104,7 @@ app.get('/conversation/:id', async (req, res) => {
 
 // messageslist will use this route to get all conversations?
 app.get("/conversations/:userId", async (req, res) => {
-  console.log(req.params.userId);
+  // console.log(req.params.userId);
   const userId = req.params.userId;
   try {
     const conversations = await Conversation.find({
@@ -119,7 +119,7 @@ app.get("/conversations/:userId", async (req, res) => {
 });
 
 app.get("/friendList", async (req, res) => {
-  console.log(`friendlist~`)
+  // console.log(`friendlist~`)
   let userId = req.body.userId;
   // console.log('checking friendList', userId);
   try {
@@ -165,7 +165,7 @@ app.get("/getUserInfo", async (req, res) => {
 })
 
 app.post("/register", async (req, res) => {
-  console.log('register req: ', req.body);
+  // console.log('register req: ', req.body);
   let userId = req.body.username;
   let thumbnailUrl = req.body.avatar_url;
   let location = locationString(req.body);
@@ -234,14 +234,18 @@ app.post('/changeprofilepicture', async (req, res) => {
 });
 
 app.post('/imgDled', async (req, res) => {
+  // console.log("🚀 ~ file: index.js:237 ~ app.post ~ req:", req.body)
   let sender = req.body.sender;
+  console.log("🚀 ~ file: index.js:239 ~ app.post ~ sender:", sender)
   let downloader = req.body.downloader;
+  console.log("🚀 ~ file: index.js:241 ~ app.post ~ req body:", downloader)
 
-  let update = {$push: { incomingNotifications: {friendId: sender, type: 'saved photo'}  }};
-  let userFilter = {friendId: sender};
+  let update = {$push: { incomingNotifications: {friendId: downloader, type: 'saved photo'}  }};
+  let userFilter = {userId: sender};
   // console.log('got friendRequest in server: ', req.body.data.friendRequestObj);
   try {
     const pending = await FriendList.updateOne(userFilter, update)
+    console.log('friendList incoming notification saved: ', pending);
     res.status(201).send();
   } catch (err) {
     console.error(err);
